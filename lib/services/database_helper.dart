@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 5, 
+      version: 5,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -51,7 +51,7 @@ class DatabaseHelper {
     for (var product in ProductData.products) {
       // ننشئ نسخة من البيانات ونضيف لها سعراً افتراضياً لتجنب الخطأ
       final Map<String, dynamic> p = Map<String, dynamic>.from(product);
-      p['price'] = 0.0; 
+      p['price'] = 0.0;
       await db.insert('products', p);
     }
   }
@@ -103,7 +103,13 @@ class DatabaseHelper {
   }
 
   // --- السلة ---
-  Future<int> addToCart(String userEmail, String name, double price, int qty, [String? image]) async {
+  Future<int> addToCart(
+    String userEmail,
+    String name,
+    double price,
+    int qty, [
+    String? image,
+  ]) async {
     final db = await instance.database;
     return await db.insert('cart', {
       'userEmail': userEmail,
@@ -116,17 +122,30 @@ class DatabaseHelper {
 
   Future<int> updateCartQty(String userEmail, String name, int qty) async {
     final db = await instance.database;
-    return await db.update('cart', {'qty': qty}, where: 'userEmail = ? AND name = ?', whereArgs: [userEmail, name]);
+    return await db.update(
+      'cart',
+      {'qty': qty},
+      where: 'userEmail = ? AND name = ?',
+      whereArgs: [userEmail, name],
+    );
   }
 
   Future<List<Map<String, dynamic>>> getCartItems(String userEmail) async {
     final db = await instance.database;
-    return await db.query('cart', where: 'userEmail = ?', whereArgs: [userEmail]);
+    return await db.query(
+      'cart',
+      where: 'userEmail = ?',
+      whereArgs: [userEmail],
+    );
   }
 
   Future<int> removeFromCart(String userEmail, String name) async {
     final db = await instance.database;
-    return await db.delete('cart', where: 'userEmail = ? AND name = ?', whereArgs: [userEmail, name]);
+    return await db.delete(
+      'cart',
+      where: 'userEmail = ? AND name = ?',
+      whereArgs: [userEmail, name],
+    );
   }
 
   Future<void> clearCart(String userEmail) async {
@@ -142,41 +161,72 @@ class DatabaseHelper {
       'orderDate': DateTime.now().toIso8601String(),
       'totalAmount': total,
       'productNames': products,
-      'status': 'Completed'
+      'status': 'Completed',
     });
   }
 
   Future<List<Map<String, dynamic>>> getOrders(String userEmail) async {
     final db = await instance.database;
-    return await db.query('orders', where: 'userEmail = ?', whereArgs: [userEmail], orderBy: 'orderDate DESC');
+    return await db.query(
+      'orders',
+      where: 'userEmail = ?',
+      whereArgs: [userEmail],
+      orderBy: 'orderDate DESC',
+    );
   }
 
   // --- المفضلة ---
   Future<int> addFavorite(String userEmail, String name) async {
     final db = await instance.database;
-    return await db.insert('favorites', {'userEmail': userEmail, 'productName': name}, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert('favorites', {
+      'userEmail': userEmail,
+      'productName': name,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> removeFavorite(String userEmail, String name) async {
     final db = await instance.database;
-    return await db.delete('favorites', where: 'userEmail = ? AND productName = ?', whereArgs: [userEmail, name]);
+    return await db.delete(
+      'favorites',
+      where: 'userEmail = ? AND productName = ?',
+      whereArgs: [userEmail, name],
+    );
   }
 
   Future<List<String>> getFavorites(String userEmail) async {
     final db = await instance.database;
-    final result = await db.query('favorites', where: 'userEmail = ?', whereArgs: [userEmail]);
+    final result = await db.query(
+      'favorites',
+      where: 'userEmail = ?',
+      whereArgs: [userEmail],
+    );
     return result.map((row) => row['productName'] as String).toList();
   }
 
   // --- هويات المستخدم ---
-  Future<int> registerUser(String username, String email, String password) async {
+  Future<int> registerUser(
+    String username,
+    String email,
+    String password,
+  ) async {
     final db = await instance.database;
-    return await db.insert('users', {'username': username, 'email': email, 'password': password});
+    return await db.insert('users', {
+      'username': username,
+      'email': email,
+      'password': password,
+    });
   }
 
-  Future<Map<String, dynamic>?> loginUser(String username, String password) async {
+  Future<Map<String, dynamic>?> loginUser(
+    String username,
+    String password,
+  ) async {
     final db = await instance.database;
-    final results = await db.query('users', where: 'username = ? AND password = ?', whereArgs: [username, password]);
+    final results = await db.query(
+      'users',
+      where: 'username = ? AND password = ?',
+      whereArgs: [username, password],
+    );
     return results.isNotEmpty ? results.first : null;
   }
 
@@ -190,7 +240,13 @@ class DatabaseHelper {
     return results.isNotEmpty;
   }
 
-  Future<int> updateUser(String oldEmail, String username, String email, String password, String? profileImage) async {
+  Future<int> updateUser(
+    String oldEmail,
+    String username,
+    String email,
+    String password,
+    String? profileImage,
+  ) async {
     final db = await instance.database;
     return await db.update(
       'users',

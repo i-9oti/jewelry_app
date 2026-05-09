@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 
 import '../providers/product_provider.dart';
+import '../models/gold_price_model.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/user_provider.dart';
 import '../providers/cart_provider.dart';
@@ -72,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 10),
               _buildFullScreenHero(context, size),
               const SizedBox(height: 24),
-              _buildGoldRates(state.goldPrices),
+              _buildGoldRates(state.goldPrice),
               const SizedBox(height: 36),
               _buildSectionTitle(
                 'أحدث المنتجات',
@@ -414,8 +415,8 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGoldRates(Map<String, double> rates) {
-    if (rates.isEmpty) return const SizedBox.shrink();
+  Widget _buildGoldRates(GoldPriceModel? goldPrice) {
+    if (goldPrice == null) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -465,9 +466,9 @@ class HomeScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildRateItem("عيار 24", rates['24'] ?? 0.0),
-                _buildRateItem("عيار 21", rates['21'] ?? 0.0),
-                _buildRateItem("عيار 18", rates['18'] ?? 0.0),
+                _buildRateItem("عيار 24", goldPrice.price24),
+                _buildRateItem("عيار 21", goldPrice.price21),
+                _buildRateItem("عيار 18", goldPrice.price18),
               ],
             ),
           ],
